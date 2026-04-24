@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: construction_checklist_app
+    restart: unless-stopped
+    ports:
+      - "8501:8501"  # Streamlit 前端
+      - "8000:8000"  # FastAPI 後端
+    volumes:
+      - ./data:/app/data
+      - ./templates:/app/templates
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - TZ=Asia/Taipei
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
